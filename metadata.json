@@ -1,0 +1,22 @@
+{
+  "name": "SHEZO",
+  "symbol": "SZO",
+  "description": "The craziest monkey on Solana. Bananas in, SOL out.",
+  "seller_fee_basis_points": 0,
+  "image": "https://eng-hussien-elnoby.github.io/shezo/logo.png",
+  "properties": {
+    "files": [
+      {
+        "uri": "https://eng-hussien-elnoby.github.io/shezo/logo.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "qBAwCUS2o5y1Fjc6AXtfKFfwdU9nEinLidpTjKvGyeW",
+        "share": 100
+      }
+    ]
+  }
+}
