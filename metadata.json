@@ -3,11 +3,11 @@
   "symbol": "SZO",
   "description": "The craziest monkey on Solana. Bananas in, SOL out.",
   "seller_fee_basis_points": 0,
-  "image": "https://eng-hussien-elnoby.github.io/shezo/logo.png",
+  "image": "https://github.com/TalusNetwork/shezo/edit/main/logo.png",
   "properties": {
     "files": [
       {
-        "uri": "https://eng-hussien-elnoby.github.io/shezo/logo.png",
+        "uri": "https://github.com/TalusNetwork/shezo/edit/main/logo.png",
         "type": "image/png"
       }
     ],
