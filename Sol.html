@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEX Liquidity & Market Cap Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>DEX Liquidity & Market Cap Calculator</h2>
+    <label for="solAmount">كمية SOL في البير:</label>
+    <input type="number" id="solAmount" step="0.0001" placeholder="مثال: 0.1"><label for="solPrice">سعر SOL بالدولار:</label>
+<input type="number" id="solPrice" step="0.01" placeholder="مثال: 100">
+
+<label for="tokenAmount">كمية التوكن في البير:</label>
+<input type="number" id="tokenAmount" placeholder="مثال: 100000000">
+
+<label for="tokenSupply">إجمالي العرض (Total Supply):</label>
+<input type="number" id="tokenSupply" placeholder="مثال: 1000000000">
+
+<button onclick="calculate()">احسب</button>
+
+<div class="result" id="result"></div>
+
+  </div>  <script>
+    function calculate() {
+      const solAmount = parseFloat(document.getElementById('solAmount').value);
+      const solPrice = parseFloat(document.getElementById('solPrice').value);
+      const tokenAmount = parseFloat(document.getElementById('tokenAmount').value);
+      const tokenSupply = parseFloat(document.getElementById('tokenSupply').value);
+
+      if (isNaN(solAmount) || isNaN(solPrice) || isNaN(tokenAmount) || isNaN(tokenSupply)) {
+        document.getElementById('result').innerText = '❌ رجاءً أدخل جميع القيم بشكل صحيح';
+        return;
+      }
+
+      const tokenPrice = (solAmount * solPrice) / tokenAmount;
+      const marketCap = tokenPrice * tokenSupply;
+      const liquidity = 2 * Math.sqrt((tokenAmount * tokenPrice) * (solAmount * solPrice));
+
+      document.getElementById('result').innerHTML = `
+        ✅ <b>السعر الحالي للتوكن:</b> $${tokenPrice.toFixed(6)} <br>
+        💰 <b>السيولة الظاهرة:</b> $${liquidity.toFixed(2)} <br>
+        📈 <b>Market Cap الظاهري:</b> $${marketCap.toFixed(2)}
+      `;
+    }
+  </script></body>
+</html>
