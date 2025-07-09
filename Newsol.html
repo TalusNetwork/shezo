@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>حاسبة السيولة والقيمة السوقية للتوكنات</title>
+  <style>
+    :root {
+      --primary: #4e44ce;
+      --secondary: #6c63ff;
+      --success: #28a745;
+      --info: #17a2b8;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --light: #f8f9fa;
+      --dark: #343a40;
+    }
+    
+    body {
+      font-family: 'Tajawal', Arial, sans-serif;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+    
+    input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border 0.3s;
+    }
+    
+    input:focus {
+      border-color: var(--secondary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(110, 99, 255, 0.2);
+    }
+    
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    
+    button:hover {
+      background-color: var(--secondary);
+      transform: translateY(-2px);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .result {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .result-item {
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .result-value {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--primary);
+    }
+    
+    .info-text {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+    
+    .tab.active {
+      border-bottom: 3px solid var(--primary);
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      
+      h2 {
+        font-size: 20px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h2>حاسبة السيولة والقيمة السوقية للتوكنات</h2>
+    
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('basic')">الحساب الأساسي</div>
+      <div class="tab" onclick="switchTab('advanced')">خيارات متقدمة</div>
+    </div>
+    
+    <div id="basic-tab" class="tab-content active">
+      <div class="input-group">
+        <label for="solAmount">كمية SOL في البير:</label>
+        <input type="number" id="solAmount" step="0.0001" placeholder="مثال: 0.1">
+      </div>
+      
+      <div class="input-group">
+        <label for="solPrice">سعر SOL بالدولار:</label>
+        <input type="number" id="solPrice" step="0.01" placeholder="مثال: 100">
+      </div>
+      
+      <div class="input-group">
+        <label for="tokenAmount">كمية التوكن في البير:</label>
+        <input type="number" id="tokenAmount" placeholder="مثال: 100000000">
+      </div>
+      
+      <div class="input-group">
+        <label for="tokenSupply">إجمالي العرض (Total Supply):</label>
+        <input type="number" id="tokenSupply" placeholder="مثال: 1000000000">
+      </div>
+      
+      <button onclick="calculate()">احسب النتائج</button>
+    </div>
+    
+    <div id="advanced-tab" class="tab-content">
+      <div class="input-group">
+        <label for="lpFee">رسوم البير (LP Fee %):</label>
+        <input type="number" id="lpFee" value="0.3" step="0.01" placeholder="مثال: 0.3">
+        <p class="info-text">عادةً تكون 0.3% لمعظم البيرات في DEX</p>
+      </div>
+      
+      <div class="input-group">
+        <label for="priceImpact">تأثير السعر عند البيع (Price Impact %):</label>
+        <input type="number" id="priceImpact" value="5" step="0.1" placeholder="مثال: 5">
+        <p class="info-text">لتقدير السعر عند بيع كمية معينة من التوكن</p>
+      </div>
+      
+      <div class="input-group">
+        <label for="sellAmount">كمية التوكن للبيع (اختياري):</label>
+        <input type="number" id="sellAmount" placeholder="أدخل الكمية لحساب تأثير البيع">
+      </div>
+    </div>
+    
+    <div class="result" id="result">
+      <div class="result-item">
+        <span>✅ السعر الحالي للتوكن:</span>
+        <span class="result-value" id="tokenPrice">-</span>
+      </div>
+      <div class="result-item">
+        <span>💰 السيولة الظاهرة:</span>
+        <span class="result-value" id="liquidity">-</span>
+      </div>
+      <div class="result-item">
+        <span>📈 القيمة السوقية (Market Cap):</span>
+        <span class="result-value" id="marketCap">-</span>
+      </div>
+      <div class="result-item" id="priceImpactResult" style="display:none;">
+        <span>⚠️ تأثير السعر عند البيع:</span>
+        <span class="result-value" id="priceImpactValue">-</span>
+      </div>
+      <div class="result-item" id="sellValueResult" style="display:none;">
+        <span>💸 القيمة المتوقعة للبيع:</span>
+        <span class="result-value" id="sellValue">-</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Deactivate all tab buttons
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Activate selected tab
+      document.getElementById(tabName + '-tab').classList.add('active');
+      
+      // Activate selected tab button
+      event.currentTarget.classList.add('active');
+    }
+    
+    function calculate() {
+      // Basic inputs
+      const solAmount = parseFloat(document.getElementById('solAmount').value);
+      const solPrice = parseFloat(document.getElementById('solPrice').value);
+      const tokenAmount = parseFloat(document.getElementById('tokenAmount').value);
+      const tokenSupply = parseFloat(document.getElementById('tokenSupply').value);
+      
+      // Advanced inputs
+      const lpFee = parseFloat(document.getElementById('lpFee').value) || 0.3;
+      const priceImpactPercent = parseFloat(document.getElementById('priceImpact').value) || 5;
+      const sellAmount = parseFloat(document.getElementById('sellAmount').value);
+      
+      if (isNaN(solAmount) || isNaN(solPrice) || isNaN(tokenAmount) || isNaN(tokenSupply)) {
+        alert('❌ رجاءً أدخل جميع القيم الأساسية بشكل صحيح');
+        return;
+      }
+      
+      // Calculate token price
+      const tokenPrice = (solAmount * solPrice) / tokenAmount;
+      
+      // Calculate market cap
+      const marketCap = tokenPrice * tokenSupply;
+      
+      // Calculate liquidity (for constant product AMM)
+      const liquidity = solAmount * solPrice * 2; // Simplified liquidity calculation
+      
+      // Update basic results
+      document.getElementById('tokenPrice').textContent = `$${tokenPrice.toFixed(8)}`;
+      document.getElementById('liquidity').textContent = `$${liquidity.toFixed(2)}`;
+      document.getElementById('marketCap').textContent = `$${marketCap.toFixed(2)}`;
+      
+      // Advanced calculations if sell amount is provided
+      if (!isNaN(sellAmount) {
+        // Calculate price impact (simplified)
+        const k = solAmount * tokenAmount; // Constant product
+        const newTokenAmount = tokenAmount + sellAmount;
+        const newSolAmount = k / newTokenAmount;
+        const priceImpact = ((solAmount - newSolAmount) / solAmount) * 100;
+        
+        // Calculate expected value received
+        const valueReceived = (solAmount - newSolAmount) * solPrice * (1 - lpFee/100);
+        
+        document.getElementById('priceImpactValue').textContent = `${priceImpact.toFixed(2)}%`;
+        document.getElementById('sellValue').textContent = `$${valueReceived.toFixed(2)}`;
+        document.getElementById('priceImpactResult').style.display = 'flex';
+        document.getElementById('sellValueResult').style.display = 'flex';
+      } else {
+        document.getElementById('priceImpactResult').style.display = 'none';
+        document.getElementById('sellValueResult').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
